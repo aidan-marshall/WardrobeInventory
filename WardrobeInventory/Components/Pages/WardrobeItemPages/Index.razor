@@ -1,0 +1,45 @@
+﻿@page "/wardrobeitems"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using WardrobeInventory.Models
+@using WardrobeInventory.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<WardrobeInventory.Data.WardrobeInventoryContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="/wardrobeitems/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.WardrobeItem">
+    <PropertyColumn Property="wardrobeitem => wardrobeitem.Name" />
+    <PropertyColumn Property="wardrobeitem => wardrobeitem.Category" />
+    <PropertyColumn Property="wardrobeitem => wardrobeitem.Brand" />
+    <PropertyColumn Property="wardrobeitem => wardrobeitem.Color" />
+    <PropertyColumn Property="wardrobeitem => wardrobeitem.Material" />
+    <PropertyColumn Property="wardrobeitem => wardrobeitem.Size" />
+    <PropertyColumn Property="wardrobeitem => wardrobeitem.Condition" />
+    <PropertyColumn Property="wardrobeitem => wardrobeitem.StorageLocation" />
+    <PropertyColumn Property="wardrobeitem => wardrobeitem.Image" />
+    <PropertyColumn Property="wardrobeitem => wardrobeitem.Price" />
+
+    <TemplateColumn Context="wardrobeitem">
+        <a href="@($"/wardrobeitems/edit?id={wardrobeitem.Id}")">Edit</a> |
+        <a href="@($"/wardrobeitems/details?id={wardrobeitem.Id}")">Details</a> |
+        <a href="@($"/wardrobeitems/delete?id={wardrobeitem.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private WardrobeInventoryContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

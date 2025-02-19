@@ -1,0 +1,101 @@
+﻿@page "/wardrobeitems/create"
+@using Microsoft.EntityFrameworkCore
+@using WardrobeInventory.Models
+@using  WardrobeInventory.Enums
+@inject IDbContextFactory<WardrobeInventory.Data.WardrobeInventoryContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>WardrobeItem</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="WardrobeItem" OnValidSubmit="AddWardrobeItem" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="WardrobeItem.Name" class="form-control" /> 
+                <ValidationMessage For="() => WardrobeItem.Name" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="category" class="form-label">Category:</label> 
+                <InputSelect id="category" @bind-Value="WardrobeItem.Category" class="form-control">
+                    @foreach (var category in Enum.GetValues(typeof(ItemCategory)).Cast<ItemCategory>())
+                    {
+                        <option value="@category">@category.ToString()</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => WardrobeItem.Category" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="brand" class="form-label">Brand:</label> 
+                <InputText id="brand" @bind-Value="WardrobeItem.Brand" class="form-control" /> 
+                <ValidationMessage For="() => WardrobeItem.Brand" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="color" class="form-label">Color:</label> 
+                <InputText id="color" @bind-Value="WardrobeItem.Color" class="form-control" /> 
+                <ValidationMessage For="() => WardrobeItem.Color" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="material" class="form-label">Material:</label> 
+                <InputText id="material" @bind-Value="WardrobeItem.Material" class="form-control" /> 
+                <ValidationMessage For="() => WardrobeItem.Material" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="size" class="form-label">Size:</label> 
+                <InputText id="size" @bind-Value="WardrobeItem.Size" class="form-control" /> 
+                <ValidationMessage For="() => WardrobeItem.Size" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="condition" class="form-label">Condition:</label> 
+                <InputSelect id="condition" @bind-Value="WardrobeItem.Condition" class="form-control">
+                    @foreach (var condition in Enum.GetValues(typeof(ItemCondition)).Cast<ItemCondition>())
+                    {
+                        <option value="@condition">@condition.ToString()</option>
+                    }
+                </InputSelect>
+
+                <ValidationMessage For="() => WardrobeItem.Condition" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="storagelocation" class="form-label">StorageLocation:</label> 
+                <InputText id="storagelocation" @bind-Value="WardrobeItem.StorageLocation" class="form-control" /> 
+                <ValidationMessage For="() => WardrobeItem.StorageLocation" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="image" class="form-label">Image:</label> 
+                <InputText id="image" @bind-Value="WardrobeItem.Image" class="form-control" /> 
+                <ValidationMessage For="() => WardrobeItem.Image" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="price" class="form-label">Price:</label> 
+                <InputNumber id="price" @bind-Value="WardrobeItem.Price" class="form-control" /> 
+                <ValidationMessage For="() => WardrobeItem.Price" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/wardrobeitems">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private WardrobeItem WardrobeItem { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddWardrobeItem()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.WardrobeItem.Add(WardrobeItem);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/wardrobeitems");
+    }
+}

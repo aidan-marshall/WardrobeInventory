@@ -1,0 +1,91 @@
+﻿@page "/wardrobeitems/delete"
+@using Microsoft.EntityFrameworkCore
+@using WardrobeInventory.Models
+@inject IDbContextFactory<WardrobeInventory.Data.WardrobeInventoryContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<p>Are you sure you want to delete this?</p>
+<div>
+    <h2>WardrobeItem</h2>
+    <hr />
+    @if (wardrobeitem is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@wardrobeitem.Name</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Category</dt>
+            <dd class="col-sm-10">@wardrobeitem.Category</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Brand</dt>
+            <dd class="col-sm-10">@wardrobeitem.Brand</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Color</dt>
+            <dd class="col-sm-10">@wardrobeitem.Color</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Material</dt>
+            <dd class="col-sm-10">@wardrobeitem.Material</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Size</dt>
+            <dd class="col-sm-10">@wardrobeitem.Size</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Condition</dt>
+            <dd class="col-sm-10">@wardrobeitem.Condition</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">StorageLocation</dt>
+            <dd class="col-sm-10">@wardrobeitem.StorageLocation</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Image</dt>
+            <dd class="col-sm-10">@wardrobeitem.Image</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Price</dt>
+            <dd class="col-sm-10">@wardrobeitem.Price</dd>
+        </dl>
+        <EditForm method="post" Model="wardrobeitem" OnValidSubmit="DeleteWardrobeItem" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(wardrobeitem is null)">Delete</button> |
+            <a href="/wardrobeitems">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private WardrobeItem? wardrobeitem;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        wardrobeitem = await context.WardrobeItem.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (wardrobeitem is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    private async Task DeleteWardrobeItem()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.WardrobeItem.Remove(wardrobeitem!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/wardrobeitems");
+    }
+}
