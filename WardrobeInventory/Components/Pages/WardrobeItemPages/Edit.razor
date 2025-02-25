@@ -4,6 +4,7 @@
 @using WardrobeInventory.Enums
 @inject IDbContextFactory<WardrobeInventory.Data.WardrobeInventoryContext> DbFactory
 @inject NavigationManager NavigationManager
+@rendermode InteractiveServer
 
 <PageTitle>Edit</PageTitle>
 
@@ -74,15 +75,19 @@ else
                     <ValidationMessage For="() => WardrobeItem.StorageLocation" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="image" class="form-label">Image:</label>
-                    <InputText id="image" @bind-Value="WardrobeItem.Image" class="form-control" />
-                    <ValidationMessage For="() => WardrobeItem.Image" class="text-danger" />
-                </div>
-                <div class="mb-3">
                     <label for="price" class="form-label">Price:</label>
                     <InputNumber id="price" @bind-Value="WardrobeItem.Price" class="form-control" />
                     <ValidationMessage For="() => WardrobeItem.Price" class="text-danger" />
                 </div>
+                <div class="mb-3">
+                    <label for="image" class="form-label">Upload Image:</label>
+                    <InputFile id="image" OnChange="HandleFileUpload" multiple />
+                </div>
+
+                @if (ImagePreview != null)
+                {
+                    <img src="@ImagePreview" width="200" />
+                }
                 <button type="submit" class="btn btn-primary">Save</button>
             </EditForm>
         </div>
@@ -94,6 +99,9 @@ else
 </div>
 
 @code {
+    private string? ImagePreview;
+    private byte[]? UploadedFile;
+
     [SupplyParameterFromQuery]
     private int Id { get; set; }
 
@@ -118,6 +126,7 @@ else
         using var context = DbFactory.CreateDbContext();
         context.Attach(WardrobeItem!).State = EntityState.Modified;
 
+
         try
         {
             await context.SaveChangesAsync();
@@ -141,5 +150,23 @@ else
     {
         using var context = DbFactory.CreateDbContext();
         return context.WardrobeItem.Any(e => e.Id == id);
+    }
+
+    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        Console.WriteLine("HandleFileUpload triggered!"); // Debugging line
+
+        var file = e.File;
+        var buffer = new byte[file.Size];
+        await file.OpenReadStream().ReadAsync(buffer);
+
+        UploadedFile = buffer;
+        ImagePreview = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}";
+
+        if (WardrobeItem != null)
+        {
+            WardrobeItem.Image = UploadedFile;
+            Console.WriteLine($"File uploaded: {UploadedFile.Length} bytes");
+        }
     }
 }

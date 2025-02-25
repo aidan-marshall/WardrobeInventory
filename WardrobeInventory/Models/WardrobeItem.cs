@@ -15,7 +15,7 @@ public string Material { get; set; }
 public string Size { get; set; }
 public ItemCondition Condition { get; set; }
 public string StorageLocation { get; set; }
-public string? Image { get; set; }
+public byte[]? Image { get; set; }
 [DataType(DataType.Currency)]
 [Column(TypeName = "decimal(18, 2)")]
 public decimal Price { get; set; }
