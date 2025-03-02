@@ -1,4 +1,4 @@
-﻿@page "/wardrobeitems/details"
+﻿@page "/details"
 @using Microsoft.EntityFrameworkCore
 @using WardrobeInventory.Models
 @inject IDbContextFactory<WardrobeInventory.Data.WardrobeInventoryContext> DbFactory
@@ -39,8 +39,8 @@
             <dd class="col-sm-10">@wardrobeitem.Price</dd>
         </dl>
         <div>
-            <a href="@($"/wardrobeitems/edit?id={wardrobeitem.Id}")">Edit</a> |
-            <a href="@($"/wardrobeitems")">Back to List</a>
+            <a href="@($"/edit?id={wardrobeitem.Id}")">Edit</a> |
+            <a href="@($"/")">Back to List</a>
         </div>
     }
 </div>

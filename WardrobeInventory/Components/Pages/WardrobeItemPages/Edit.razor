@@ -1,4 +1,4 @@
-﻿@page "/wardrobeitems/edit"
+﻿@page "/edit"
 @using Microsoft.EntityFrameworkCore
 @using WardrobeInventory.Models
 @using WardrobeInventory.Enums
@@ -95,7 +95,7 @@ else
 }
 
 <div>
-    <a href="/wardrobeitems">Back to List</a>
+    <a href="/">Back to List</a>
 </div>
 
 @code {
@@ -143,7 +143,7 @@ else
             }
         }
 
-        NavigationManager.NavigateTo("/wardrobeitems");
+        NavigationManager.NavigateTo("/");
     }
 
     private bool WardrobeItemExists(int id)
@@ -154,8 +154,6 @@ else
 
     private async Task HandleFileUpload(InputFileChangeEventArgs e)
     {
-        Console.WriteLine("HandleFileUpload triggered!"); // Debugging line
-
         var file = e.File;
         var buffer = new byte[file.Size];
         await file.OpenReadStream().ReadAsync(buffer);

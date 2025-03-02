@@ -1,4 +1,4 @@
-﻿@page "/wardrobeitems/create"
+﻿@page "/create"
 @using Microsoft.EntityFrameworkCore
 @using WardrobeInventory.Models
 @using  WardrobeInventory.Enums
@@ -78,7 +78,7 @@
 </div>
 
 <div>
-    <a href="/wardrobeitems">Back to List</a>
+    <a href="/">Back to List</a>
 </div>
 
 @code {
@@ -91,6 +91,6 @@
         using var context = DbFactory.CreateDbContext();
         context.WardrobeItem.Add(WardrobeItem);
         await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/wardrobeitems");
+        NavigationManager.NavigateTo("/");
     }
 }
