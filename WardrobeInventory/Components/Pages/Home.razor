@@ -25,7 +25,9 @@
     <PropertyColumn Property="wardrobeitem => wardrobeitem.Size" />
     <PropertyColumn Property="wardrobeitem => wardrobeitem.Condition" />
     <PropertyColumn Property="wardrobeitem => wardrobeitem.StorageLocation" />
-    <PropertyColumn Property="wardrobeitem => wardrobeitem.Image" />
+    <TemplateColumn Context="wardrobeitem" Title="Image">
+        @((wardrobeitem.Image == null || wardrobeitem.Image.Length == 0) ? "No" : "Yes")
+    </TemplateColumn>
     <PropertyColumn Property="wardrobeitem => wardrobeitem.Price" />
 
     <TemplateColumn Context="wardrobeitem">
@@ -47,14 +49,6 @@
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
 
-    private string GetImageSource(byte[]? imageData)
-    {
-        if (imageData != null && imageData.Length > 0)
-        {
-            string base64String = Convert.ToBase64String(imageData);
-            return $"data:image/png;base64,{base64String}";
-        }
-        return "";
-    }
+
 }
 

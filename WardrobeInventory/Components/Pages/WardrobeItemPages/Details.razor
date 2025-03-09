@@ -34,7 +34,9 @@
             <dt class="col-sm-2">StorageLocation</dt>
             <dd class="col-sm-10">@wardrobeitem.StorageLocation</dd>
             <dt class="col-sm-2">Image</dt>
-            <dd class="col-sm-10">@wardrobeitem.Image</dd>
+            <dd class="col-sm-10">
+                <img src="@GetImageSource(wardrobeitem.Image)">
+            </dd>
             <dt class="col-sm-2">Price</dt>
             <dd class="col-sm-10">@wardrobeitem.Price</dd>
         </dl>
@@ -60,5 +62,15 @@
         {
             NavigationManager.NavigateTo("notfound");
         }
+    }
+    
+    private string GetImageSource(byte[]? imageData)
+    {
+        if (imageData != null && imageData.Length > 0)
+        {
+            string base64String = Convert.ToBase64String(imageData);
+            return $"data:image/png;base64,{base64String}";
+        }
+        return "";
     }
 }
