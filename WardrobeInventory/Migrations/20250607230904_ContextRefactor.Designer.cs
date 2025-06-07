@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WardrobeInventory.Data;
 
@@ -10,9 +11,11 @@ using WardrobeInventory.Data;
 namespace WardrobeInventory.Migrations
 {
     [DbContext(typeof(WardrobeInventoryContext))]
-    partial class WardrobeInventoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250607230904_ContextRefactor")]
+    partial class ContextRefactor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

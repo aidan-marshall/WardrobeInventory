@@ -1,10 +1,9 @@
 ﻿@page "/create"
 @using WardrobeInventory.Models
 @using  WardrobeInventory.Enums
-@using WardrobeInventory.Components.Reusable
-@using WardrobeInventory.Data
+@using WardrobeInventory.Services
 @inject NavigationManager NavigationManager
-@inject WardrobeInventoryContext DbContext
+@inject IWardrobeService WardrobeService
 
 <PageTitle>Create</PageTitle>
 
@@ -92,8 +91,7 @@
 
     private async Task AddWardrobeItem()
     {
-        await DbContext.WardrobeItem.AddAsync(WardrobeItem);
-        await DbContext.SaveChangesAsync();
+        await WardrobeService.AddWardrobeItemAsync(WardrobeItem);
         NavigationManager.NavigateTo("/");
     }
 
