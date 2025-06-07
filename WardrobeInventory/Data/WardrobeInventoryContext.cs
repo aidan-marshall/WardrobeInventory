@@ -7,13 +7,8 @@ using WardrobeInventory.Models;
 
 namespace WardrobeInventory.Data
 {
-    public class WardrobeInventoryContext : DbContext
+    public class WardrobeInventoryContext(DbContextOptions<WardrobeInventoryContext> options) : DbContext(options)
     {
-        public WardrobeInventoryContext (DbContextOptions<WardrobeInventoryContext> options)
-            : base(options)
-        {
-        }
-
-        public DbSet<WardrobeInventory.Models.WardrobeItem> WardrobeItem { get; set; } = default!;
+        public DbSet<WardrobeItem> WardrobeItems { get; set; }
     }
 }

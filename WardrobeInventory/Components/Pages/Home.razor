@@ -1,11 +1,10 @@
 ﻿@page "/"
 
-@using Microsoft.EntityFrameworkCore
-@using WardrobeInventory.Data
 @using WardrobeInventory.Models
 @using WardrobeInventory.Components.Reusable
-@inject WardrobeInventoryContext DbContext
+@using WardrobeInventory.Services
 @inject NavigationManager Navigation
+@inject IWardrobeService WardrobeService
 @rendermode InteractiveServer
 
 <PageTitle>Your Wardrobe Items</PageTitle>
@@ -14,24 +13,24 @@
 
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-    @if (Items == null || !Items.Any())
+    @if (_items == null || !_items.Any())
     {
         <p>No items found!</p>
     }
     else
     {
-        @foreach (var item in Items)
+        @foreach (var item in _items)
         {
             <Card ImageBytes="@item.Image" Description="@item.Name" Category="@item.Category.ToString()"
                   Color="@item.Color"
                   OnEditClicked="() => EditItem(item)"
-                  OnDeleteClicked="() => DeleteItem(item)"/>
+                  OnDeleteClicked="() => ConfirmDelete(item)"/>
         }
     }
 </div>
 
 @code {
-    private List<WardrobeItem>? Items;
+    private List<WardrobeItem>? _items;
 
     private void EditItem(WardrobeItem item)
     {
@@ -43,17 +42,14 @@
         Navigation.NavigateTo("/create");
     }
 
-    private async Task DeleteItem(WardrobeItem item)
+    private void ConfirmDelete(WardrobeItem item)
     {
-        await DbContext.WardrobeItem.Where(i => i.Id == item.Id).ExecuteDeleteAsync();
-        Items?.Remove(item);
-        StateHasChanged();
+        Navigation.NavigateTo($"/delete?id={item.Id}");
     }
     
     protected override async Task OnInitializedAsync()
     {
-        Items = await DbContext.WardrobeItem.ToListAsync();
+        _items = await WardrobeService.GetWardrobeItemsAsync();
     }
-
 }
 

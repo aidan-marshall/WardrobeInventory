@@ -67,7 +67,7 @@ namespace WardrobeInventory.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("WardrobeItem");
+                    b.ToTable("WardrobeItems");
                 });
 #pragma warning restore 612, 618
         }

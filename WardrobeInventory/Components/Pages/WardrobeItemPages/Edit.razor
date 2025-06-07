@@ -1,10 +1,9 @@
 ﻿@page "/edit"
-@using Microsoft.EntityFrameworkCore
 @using WardrobeInventory.Models
 @using WardrobeInventory.Enums
-@using WardrobeInventory.Components.Reusable
-@inject IDbContextFactory<WardrobeInventory.Data.WardrobeInventoryContext> DbFactory
+@using WardrobeInventory.Services
 @inject NavigationManager NavigationManager
+@inject IWardrobeService WardrobeService
 
 <PageTitle>Edit</PageTitle>
 
@@ -112,15 +111,9 @@ else
 
     [SupplyParameterFromForm] private WardrobeItem? WardrobeItem { get; set; }
 
-    private void GoHome()
-    {
-        NavigationManager.NavigateTo("/");
-    }
-
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        WardrobeItem ??= await context.WardrobeItem.FirstOrDefaultAsync(m => m.Id == Id);
+        WardrobeItem = await WardrobeService.GetWardrobeItemAsync(Id);
 
         if (WardrobeItem is null)
         {
@@ -128,44 +121,26 @@ else
         }
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateWardrobeItem()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(WardrobeItem!).State = EntityState.Modified;
+        if (WardrobeItem is null)
+            return;
 
-
-        try
-        {
-            await context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!WardrobeItemExists(WardrobeItem!.Id))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
-        }
-
+        await WardrobeService.UpdateWardrobeItemAsync(WardrobeItem);
         NavigationManager.NavigateTo("/");
-    }
-
-    private bool WardrobeItemExists(int id)
-    {
-        using var context = DbFactory.CreateDbContext();
-        return context.WardrobeItem.Any(e => e.Id == id);
     }
 
     private async Task HandleFileUpload(InputFileChangeEventArgs e)
     {
         var file = e.File;
         var buffer = new byte[file.Size];
-        await file.OpenReadStream().ReadAsync(buffer);
+        var bytesRead = await file.OpenReadStream().ReadAsync(buffer);
+
+        // If bytesRead < buffer.Length, slice buffer to correct size
+        if (bytesRead < buffer.Length)
+        {
+            buffer = buffer[..bytesRead];
+        }
 
         UploadedFile = buffer;
         ImagePreview = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}";

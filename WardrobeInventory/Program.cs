@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using WardrobeInventory.Data;
+using WardrobeInventory.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContextFactory<WardrobeInventoryContext>(options =>
@@ -11,6 +12,8 @@ builder.Services.AddDbContextFactory<WardrobeInventoryContext>(options =>
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddTransient<IWardrobeService, WardrobeServiceEntityFramework>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
