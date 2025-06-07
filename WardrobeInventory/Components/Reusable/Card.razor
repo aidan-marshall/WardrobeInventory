@@ -1,0 +1,41 @@
+@inherits LayoutComponentBase
+
+<div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 p-4 grid grid-cols-2 gap-4">
+    <!-- Left: Item Details -->
+    <div>
+        <h2 class="text-xl font-semibold mb-2">@Description</h2>
+        <p class="text-gray-600">Category: @Category</p>
+        <p class="text-gray-600">Color: @Color</p>
+    </div>
+
+    <!-- Right: Image -->
+    <div class="flex justify-end">
+        <img src="@ImageSource" alt="@Description" class="w-48 h-48 object-cover rounded-lg" />
+    </div>
+
+    <!-- Bottom row: Buttons (span both columns) -->
+    <div class="col-span-2 flex justify-end gap-2 mt-4">
+        <AppButton OnButtonClicked="@OnEdit" Content="Edit"></AppButton>
+        <AppButton OnButtonClicked="@OnDelete" Content="Delete" TailWindColor="bg-red-600"></AppButton>
+    </div>
+</div>
+
+@code {
+    [Parameter] public byte[] ImageBytes { get; set; }
+    [Parameter] public string Description { get; set; }
+    [Parameter] public string Category { get; set; }
+    [Parameter] public string Color { get; set; }
+    [Parameter] public EventCallback OnEditClicked { get; set; }
+    [Parameter] public EventCallback OnDeleteClicked { get; set; }
+
+    private Task OnEdit() => OnEditClicked.InvokeAsync();
+    private Task OnDelete() => OnDeleteClicked.InvokeAsync();
+
+
+    // If ImageBytes is null or empty, use default image
+    private string ImageSource =>
+        ImageBytes is { Length: > 0 }
+            ? $"data:image/png;base64,{Convert.ToBase64String(ImageBytes)}"
+            : "images/icon_shirt.svg";
+
+}

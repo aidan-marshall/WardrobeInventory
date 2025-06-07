@@ -2,16 +2,16 @@
 @using Microsoft.EntityFrameworkCore
 @using WardrobeInventory.Models
 @using WardrobeInventory.Enums
+@using WardrobeInventory.Components.Reusable
 @inject IDbContextFactory<WardrobeInventory.Data.WardrobeInventoryContext> DbFactory
 @inject NavigationManager NavigationManager
-@rendermode InteractiveServer
 
 <PageTitle>Edit</PageTitle>
 
 <h1>Edit</h1>
 
 <h2>WardrobeItem</h2>
-<hr />
+<hr/>
 @if (WardrobeItem is null)
 {
     <p><em>Loading...</em></p>
@@ -21,13 +21,13 @@ else
     <div class="row">
         <div class="col-md-4">
             <EditForm method="post" Model="WardrobeItem" OnValidSubmit="UpdateWardrobeItem" FormName="edit" Enhance>
-                <DataAnnotationsValidator />
+                <DataAnnotationsValidator/>
                 <ValidationSummary role="alert"/>
-                <input type="hidden" name="WardrobeItem.Id" value="@WardrobeItem.Id" />
+                <input type="hidden" name="WardrobeItem.Id" value="@WardrobeItem.Id"/>
                 <div class="mb-3">
                     <label for="name" class="form-label">Name:</label>
-                    <InputText id="name" @bind-Value="WardrobeItem.Name" class="form-control" />
-                    <ValidationMessage For="() => WardrobeItem.Name" class="text-danger" />
+                    <InputText id="name" @bind-Value="WardrobeItem.Name" class="form-control"/>
+                    <ValidationMessage For="() => WardrobeItem.Name" class="text-danger"/>
                 </div>
                 <div class="mb-3">
                     <label for="category" class="form-label">Category:</label>
@@ -37,27 +37,27 @@ else
                             <option value="@category">@category.ToString()</option>
                         }
                     </InputSelect>
-                    <ValidationMessage For="() => WardrobeItem.Category" class="text-danger" />
+                    <ValidationMessage For="() => WardrobeItem.Category" class="text-danger"/>
                 </div>
                 <div class="mb-3">
                     <label for="brand" class="form-label">Brand:</label>
-                    <InputText id="brand" @bind-Value="WardrobeItem.Brand" class="form-control" />
-                    <ValidationMessage For="() => WardrobeItem.Brand" class="text-danger" />
+                    <InputText id="brand" @bind-Value="WardrobeItem.Brand" class="form-control"/>
+                    <ValidationMessage For="() => WardrobeItem.Brand" class="text-danger"/>
                 </div>
                 <div class="mb-3">
                     <label for="color" class="form-label">Color:</label>
-                    <InputText id="color" @bind-Value="WardrobeItem.Color" class="form-control" />
-                    <ValidationMessage For="() => WardrobeItem.Color" class="text-danger" />
+                    <InputText id="color" @bind-Value="WardrobeItem.Color" class="form-control"/>
+                    <ValidationMessage For="() => WardrobeItem.Color" class="text-danger"/>
                 </div>
                 <div class="mb-3">
                     <label for="material" class="form-label">Material:</label>
-                    <InputText id="material" @bind-Value="WardrobeItem.Material" class="form-control" />
-                    <ValidationMessage For="() => WardrobeItem.Material" class="text-danger" />
+                    <InputText id="material" @bind-Value="WardrobeItem.Material" class="form-control"/>
+                    <ValidationMessage For="() => WardrobeItem.Material" class="text-danger"/>
                 </div>
                 <div class="mb-3">
                     <label for="size" class="form-label">Size:</label>
-                    <InputText id="size" @bind-Value="WardrobeItem.Size" class="form-control" />
-                    <ValidationMessage For="() => WardrobeItem.Size" class="text-danger" />
+                    <InputText id="size" @bind-Value="WardrobeItem.Size" class="form-control"/>
+                    <ValidationMessage For="() => WardrobeItem.Size" class="text-danger"/>
                 </div>
                 <div class="mb-3">
                     <label for="condition" class="form-label">Condition:</label>
@@ -67,46 +67,54 @@ else
                             <option value="@condition">@condition.ToString()</option>
                         }
                     </InputSelect>
-                    <ValidationMessage For="() => WardrobeItem.Condition" class="text-danger" />
+                    <ValidationMessage For="() => WardrobeItem.Condition" class="text-danger"/>
                 </div>
                 <div class="mb-3">
                     <label for="storagelocation" class="form-label">StorageLocation:</label>
-                    <InputText id="storagelocation" @bind-Value="WardrobeItem.StorageLocation" class="form-control" />
-                    <ValidationMessage For="() => WardrobeItem.StorageLocation" class="text-danger" />
+                    <InputText id="storagelocation" @bind-Value="WardrobeItem.StorageLocation" class="form-control"/>
+                    <ValidationMessage For="() => WardrobeItem.StorageLocation" class="text-danger"/>
                 </div>
                 <div class="mb-3">
                     <label for="price" class="form-label">Price:</label>
-                    <InputNumber id="price" @bind-Value="WardrobeItem.Price" class="form-control" />
-                    <ValidationMessage For="() => WardrobeItem.Price" class="text-danger" />
+                    <InputNumber id="price" @bind-Value="WardrobeItem.Price" class="form-control"/>
+                    <ValidationMessage For="() => WardrobeItem.Price" class="text-danger"/>
                 </div>
                 <div class="mb-3">
                     <label for="image" class="form-label">Upload Image:</label>
-                    <InputFile id="image" OnChange="HandleFileUpload" multiple />
+                    <InputFile id="image" OnChange="HandleFileUpload" multiple/>
                 </div>
 
                 @if (ImagePreview != null)
                 {
-                    <img src="@ImagePreview" width="200" />
+                    <img src="@ImagePreview" width="200"/>
                 }
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    Save
+                </button>
+
             </EditForm>
+            <div class="pt-2 pb-2">
+                <AppButton OnButtonClicked="@GoHome"
+                           Content="Go Back"
+                           TailWindColor="bg-gray-500 hover:bg-gray-600 "/>
+            </div>
         </div>
     </div>
 }
 
-<div>
-    <a href="/">Back to List</a>
-</div>
 
 @code {
     private string? ImagePreview;
     private byte[]? UploadedFile;
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    [SupplyParameterFromQuery] private int Id { get; set; }
 
-    [SupplyParameterFromForm]
-    private WardrobeItem? WardrobeItem { get; set; }
+    [SupplyParameterFromForm] private WardrobeItem? WardrobeItem { get; set; }
+
+    private void GoHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -167,4 +175,5 @@ else
             Console.WriteLine($"File uploaded: {UploadedFile.Length} bytes");
         }
     }
+
 }

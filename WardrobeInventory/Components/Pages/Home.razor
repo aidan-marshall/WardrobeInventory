@@ -1,54 +1,59 @@
 ﻿@page "/"
 
 @using Microsoft.EntityFrameworkCore
-@using Microsoft.AspNetCore.Components.QuickGrid
-@using WardrobeInventory.Models
 @using WardrobeInventory.Data
-@implements IAsyncDisposable
-@inject IDbContextFactory<WardrobeInventory.Data.WardrobeInventoryContext> DbFactory
+@using WardrobeInventory.Models
+@using WardrobeInventory.Components.Reusable
+@inject WardrobeInventoryContext DbContext
+@inject NavigationManager Navigation
 @rendermode InteractiveServer
 
-<PageTitle>Wardrobe</PageTitle>
+<PageTitle>Your Wardrobe Items</PageTitle>
 
-<h1 class="text-4xl fw-bolder underline">Wardrobe</h1>
-
-<p>
-    <a href="/create">Create New</a>
-</p>
-
- <QuickGrid Class="table" Items="context.WardrobeItem"> 
-    <PropertyColumn Property="wardrobeitem => wardrobeitem.Name" />
-    <PropertyColumn Property="wardrobeitem => wardrobeitem.Category" /> 
-    <PropertyColumn Property="wardrobeitem => wardrobeitem.Brand" />
-    <PropertyColumn Property="wardrobeitem => wardrobeitem.Color" />
-    <PropertyColumn Property="wardrobeitem => wardrobeitem.Material" />
-    <PropertyColumn Property="wardrobeitem => wardrobeitem.Size" />
-    <PropertyColumn Property="wardrobeitem => wardrobeitem.Condition" />
-    <PropertyColumn Property="wardrobeitem => wardrobeitem.StorageLocation" />
-    <TemplateColumn Context="wardrobeitem" Title="Image">
-        @((wardrobeitem.Image == null || wardrobeitem.Image.Length == 0) ? "No" : "Yes")
-    </TemplateColumn>
-    <PropertyColumn Property="wardrobeitem => wardrobeitem.Price" />
-
-    <TemplateColumn Context="wardrobeitem">
-        <a href="@($"/edit?id={wardrobeitem.Id}")">Edit</a> |
-        <a href="@($"/details?id={wardrobeitem.Id}")">Details</a> |
-        <a href="@($"/delete?id={wardrobeitem.Id}")">Delete</a>
-    </TemplateColumn>
-</QuickGrid>
+<AppButton OnButtonClicked="@CreateNew" Content="New Wardrobe Item"></AppButton>
 
 
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+    @if (Items == null || !Items.Any())
+    {
+        <p>No items found!</p>
+    }
+    else
+    {
+        @foreach (var item in Items)
+        {
+            <Card ImageBytes="@item.Image" Description="@item.Name" Category="@item.Category.ToString()"
+                  Color="@item.Color"
+                  OnEditClicked="() => EditItem(item)"
+                  OnDeleteClicked="() => DeleteItem(item)"/>
+        }
+    }
+</div>
 
 @code {
-    private WardrobeInventoryContext context = default!;
+    private List<WardrobeItem>? Items;
 
-    protected override void OnInitialized()
+    private void EditItem(WardrobeItem item)
     {
-        context = DbFactory.CreateDbContext();
+        Navigation.NavigateTo($"/edit?id={item.Id}");
     }
 
-    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+    private void CreateNew()
+    {
+        Navigation.NavigateTo("/create");
+    }
 
+    private async Task DeleteItem(WardrobeItem item)
+    {
+        await DbContext.WardrobeItem.Where(i => i.Id == item.Id).ExecuteDeleteAsync();
+        Items?.Remove(item);
+        StateHasChanged();
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Items = await DbContext.WardrobeItem.ToListAsync();
+    }
 
 }
 

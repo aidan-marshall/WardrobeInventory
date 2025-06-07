@@ -1,0 +1,14 @@
+<button type="button" class="@($"{TailWindColor} text-white px-4 py-2 rounded")"
+@onclick="OnClick">@Content
+</button>
+
+@code {
+
+    [Parameter] public EventCallback OnButtonClicked { get; set; }
+    [Parameter] public required string Content { get; set; }
+
+    [Parameter] public string TailWindColor { get; set; } = "bg-blue-600";
+
+    private Task OnClick() => OnButtonClicked.InvokeAsync();
+
+}
